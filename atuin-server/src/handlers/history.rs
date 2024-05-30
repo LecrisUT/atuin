@@ -65,7 +65,8 @@ pub async fn list<DB: Database>(
 
     if req.sync_ts.unix_timestamp_nanos() < 0 || req.history_ts.unix_timestamp_nanos() < 0 {
         error!("client asked for history from < epoch 0");
-        counter!("atuin_history_epoch_before_zero", 1);
+        let counter_atuin_history_epoch_before_zero = counter!("atuin_history_epoch_before_zero");
+        counter_atuin_history_epoch_before_zero.increment(1);
 
         return Err(
             ErrorResponse::reply("asked for history from before epoch 0")
@@ -95,7 +96,8 @@ pub async fn list<DB: Database>(
         user.id
     );
 
-    counter!("atuin_history_returned", history.len() as u64);
+    let counter_atuin_history_returned = counter!("atuin_history_returned");
+    counter_atuin_history_returned.increment(history.len() as u64);
 
     Ok(Json(SyncHistoryResponse { history }))
 }
@@ -131,7 +133,8 @@ pub async fn add<DB: Database>(
     let State(AppState { database, settings }) = state;
 
     debug!("request to add {} history items", req.len());
-    counter!("atuin_history_uploaded", req.len() as u64);
+    let counter_atuin_history_uploaded = counter!("atuin_history_uploaded");
+    counter_atuin_history_uploaded.increment(req.len() as u64);
 
     let mut history: Vec<NewHistory> = req
         .into_iter()
@@ -151,7 +154,8 @@ pub async fn add<DB: Database>(
         // Don't return an error here. We want to insert as much of the
         // history list as we can, so log the error and continue going.
         if !keep {
-            counter!("atuin_history_too_long", 1);
+            let counter_atuin_history_too_long = counter!("atuin_history_too_long");
+            counter_atuin_history_too_long.increment(1);
 
             tracing::warn!(
                 "history too long, got length {}, max {}",
