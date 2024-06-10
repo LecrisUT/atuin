@@ -194,7 +194,9 @@ mod test {
     #[tokio::test(flavor = "multi_thread")]
     async fn test_import() {
         let pool: SqlitePool = SqlitePoolOptions::new()
-            .min_connections(2)
+            .max_connections(1)
+            .idle_timeout(None)
+            .max_lifetime(None)
             .connect(":memory:")
             .await
             .unwrap();
