@@ -670,11 +670,11 @@ impl Database for Postgres {
         let equal = res == cached_res;
 
         if equal {
-            counter!("atuin_store_idx_cache_consistent", 1);
+            counter!("atuin_store_idx_cache_consistent").increment(1);
         } else {
             // log the values if we have an inconsistent cache
             tracing::debug!(user = user.username, cache_match = equal, res = ?res, cached = ?cached_res, "record store index request");
-            counter!("atuin_store_idx_cache_inconsistent", 1);
+            counter!("atuin_store_idx_cache_inconsistent").increment(1);
         };
 
         for i in res.iter() {
