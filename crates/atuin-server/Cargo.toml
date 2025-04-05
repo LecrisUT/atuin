@@ -35,3 +35,6 @@ semver = { workspace = true }
 metrics-exporter-prometheus = "0.16"
 metrics = "0.24"
 postmark = {version= "0.10.2", features=["reqwest", "reqwest-rustls-tls"]}
+
+[target.'cfg(any(target_os="illumos"))'.dependencies]
+aws-lc-rs = {workspace = true}
